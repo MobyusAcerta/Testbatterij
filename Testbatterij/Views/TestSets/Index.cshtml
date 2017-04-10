@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "TestSets";
+}
+
+<h2>TestSets</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<table id="testSets" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Naam</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            $("#testSets").DataTable({
+                ajax: {
+                    url: "/api/testsets",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render : function(data, type, row) {
+                            return "<a href='/TestSets/Edit/" + row.id + "'>" + data + "</a>";
+                        }
+                    },
+                     {
+                         data: "id",
+                         render: function (data, type, row) {
+                             return "<button class='btn-link js-delete' data-id=" + data + ">Delete</button>";
+                         }
+                     }
+                ]
+            });
+
+            $("#testSets").on("click", ".js-delete", function () {
+                var button = $(this);
+
+                bootbox.confirm("Weet je zeker dat je deze TestSet wil verwijderen?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: '/api/testsets/' + button.attr("data-id"),
+                            type: 'delete',
+                            success: function (data) {
+                                button.parents("tr").remove();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

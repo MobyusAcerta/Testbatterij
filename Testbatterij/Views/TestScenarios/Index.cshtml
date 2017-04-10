@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Testbatterij.Models.TestScenario>
+
+@{
+    ViewBag.Title = "TestScenario's";
+}
+
+<h2>TestScenario's</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<table id="testScenarios" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Naam</th>
+            <th>Request</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            $("#testScenarios").DataTable({
+                ajax: {
+                    url: "/api/testscenarios",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, row) {
+                            return "<a href='/TestScenarios/Edit/" + row.id + "'>" + data + "</a>";
+                        }
+                    },
+                    {
+                        data: "request",
+                        render: function ( data, type, row ) {
+                            return type === 'display' && escapeXml(data).length > 150 ?
+                                (escapeXml(data).substr(0, 150) + '…') :
+                                escapeXml(data);
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function(data, type, row) {
+                            return "<button class='btn-link js-delete' data-id=" + data + ">Delete</button>";
+                        }
+                    }
+                ]
+            });
+
+            $("#testScenarios").on("click", ".js-delete", function () {
+                var button = $(this);
+
+                bootbox.confirm("Weet je zeker dat je deze TestScenario wil verwijderen?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: '/api/testscenarios/' + button.attr("data-id"),
+                            type: 'delete',
+                            success: function (data) {
+                                button.parents("tr").remove();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+       
+
+        function escapeXml(unsafe) {
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                }
+            });
+        }
+    </script>
+}

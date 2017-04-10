@@ -1,0 +1,167 @@
+﻿@model Testbatterij.Models.TestSet
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+<form id="createForm">
+    <div class="form-horizontal">
+        <h4>TestSet</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TestSetTestScenarios" data-live-search="true">TestScenario's</label>
+            <div class="col-md-10">
+                <select class="form-control selectpicker" id="TestSetTestScenarios" name="TestSetTestScenarios" data-live-search="true"></select>
+                <span class="field-validation-valid text-danger" data-valmsg-for="TestSetTestScenarios" data-valmsg-replace="true"></span>
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <button id="addBtn" class="btn btn-default">Add</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-3">
+                <table id="table" class="table">
+                    <thead>
+                        <tr>
+                            <th>TestScenario</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    <script>
+        var ids = [];
+
+        $(document).ready(function () {
+            drawTable();
+
+            $("#createForm").submit(function (e) {
+                e.preventDefault();
+
+                if(ids.length === 0)
+                    return;
+
+                if ($("#createForm").valid()) {
+                    var updateTestSet = {};
+                    updateTestSet.name = $("#Name").val();
+                    updateTestSet.TestScenarioIds = [];
+
+                    for (var i = 0; i < ids.length; i++) {
+                        updateTestSet.TestScenarioIds.push(ids[i].id);
+                    }
+
+                    $.ajax({
+                        url: '/api/testsets/',
+                        type: 'post',
+                        dataType: 'json',
+                        success: function(data) {
+                            window.location.href = "/TestSets";
+                        },
+                        data: updateTestSet
+                    });
+                }
+            });
+
+            $.ajax({
+                type: "get",
+                url: "/api/testscenarios",
+                success: function (data) {
+                    $.each(data, function (i, d) {
+                        $('#TestSetTestScenarios').append('<option value="' + d.id + '">' + d.name + '</option>');
+                        $('#TestSetTestScenarios').selectpicker('refresh');
+                    });
+                }
+            });
+
+            $("#addBtn").click(function(e) {
+                e.preventDefault();
+
+                var item = { name: $("#TestSetTestScenarios option:selected").text(), id: $("#TestSetTestScenarios").val() };
+                ids.push(item);
+
+                drawTable();
+            });
+
+            $("#table").on("click", ".js-delete",
+                function () {
+                    var button = $(this);
+                    ids.splice(button.attr("data-index"), 1);
+                    drawTable();
+                });
+            $("#table").on("click", ".js-up",
+                           function () {
+                               var index = $(this).attr("data-index");
+                               if (index > 0)
+                                   arraymove(ids, index, index - 1);
+                               drawTable();
+                           });
+            $("#table").on("click", ".js-down",
+                           function () {
+                               var index = $(this).attr("data-index");
+                               if (index < ids.length - 1)
+                                   arraymove(ids, index, index + 1);
+                               drawTable();
+                           });
+
+            function drawTable() {
+                var html = "";
+
+                for (var i = 0; i < ids.length; i++) {
+                    html += "<tr>";
+                    html += "<td>" + ids[i].name + "</td>";
+                    html += "<td><div class='btn-group' role='group' aria-label='...'>";
+                    html += "<button data-index='" + i + "' " + (i === 0 ? "disabled" : "") + " type=\"button\" class=\"btn btn-default js-up\" aria-label=\"Left Align\">\r\n<span class=\"glyphicon glyphicon-chevron-up\" aria-hidden=\"true\"></span>\r\n</button>";
+                    html += "<button data-index='" + i + "' " + (i === ids.length - 1 ? "disabled" : "") + " type=\"button\" class=\"btn btn-default js-down\" aria-label=\"Left Align\">\r\n<span class=\"glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span>\r\n</button>";
+                    html += "<button data-index='" + i + "' type=\"button\" class=\"btn btn-default js-delete\" aria-label=\"Left Align\">\r\n<span class=\"glyphicon glyphicon glyphicon-remove\" aria-hidden=\"true\"></span>\r\n</button>";
+                    html += "</div></td>";
+                    html += "</tr>";
+                }
+
+                if (ids.length === 0) {
+                    html += "<tr>";
+                    html += "<td>Geen testscenario's</td>";
+                    html += "</tr>";
+                }
+
+                $("#table tbody").html(html);
+            }
+
+            function arraymove(arr, fromIndex, toIndex) {
+    var element = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, element);
+}
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}
