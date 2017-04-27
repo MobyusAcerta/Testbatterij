@@ -21,6 +21,24 @@
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
         </div>
+        
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.SendQueue, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SendQueue, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SendQueue, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReceiveQueue, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ReceiveQueue, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ReceiveQueue, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Request, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -53,6 +71,8 @@
                 success: function(data) {
                     $("#Name").val(data.name);
                     $("#Request").val(data.request);
+                    $("#SendQueue").val(data.sendQueue);
+                    $("#ReceiveQueue").val(data.receiveQueue);
                 }
             });
 
@@ -63,6 +83,8 @@
                     var updateTestScenario = {};
                     updateTestScenario.name = $("#Name").val();
                     updateTestScenario.request = $("#Request").val();
+                    updateTestScenario.sendQueue = $("#SendQueue").val();
+                    updateTestScenario.receiveQueue = $("#ReceiveQueue").val();
 
                     $.ajax({
                         url: '/api/testscenarios/' + $("#Id").val(),
