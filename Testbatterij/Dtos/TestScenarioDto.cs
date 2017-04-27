@@ -11,5 +11,11 @@ namespace Testbatterij.Dtos
 
         [Required]
         public string Request { get; set; }
+
+        [Required]
+        public string SendQueue { get; set; }
+
+        [Required]
+        public string ReceiveQueue { get; set; }
     }
 }
