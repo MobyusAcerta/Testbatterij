@@ -177,6 +177,10 @@
     <Compile Include="Migrations\201703222107032_AddKeyToManyToMany.Designer.cs">
       <DependentUpon>201703222107032_AddKeyToManyToMany.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704271728223_AddQueues.cs" />
+    <Compile Include="Migrations\201704271728223_AddQueues.Designer.cs">
+      <DependentUpon>201704271728223_AddQueues.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\TestScenario.cs" />
@@ -497,6 +501,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703222107032_AddKeyToManyToMany.resx">
       <DependentUpon>201703222107032_AddKeyToManyToMany.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704271728223_AddQueues.resx">
+      <DependentUpon>201704271728223_AddQueues.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

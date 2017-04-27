@@ -17,6 +17,12 @@ namespace Testbatterij.Models
         [AllowHtml]
         public string Request { get; set; }
 
+        [Required]
+        public string SendQueue { get; set; }
+
+        [Required]
+        public string ReceiveQueue { get; set; }
+
         public virtual ICollection<TestSetTestScenarios> TestSetTestScenarios { get; set; }
     }
 }
